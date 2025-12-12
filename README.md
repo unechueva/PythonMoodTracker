@@ -1,7 +1,5 @@
 # Python Mood Tracker
 
-Учебный проект команды:
-
 - Backend: Django 4+
 - Приложение: moodtracker
 - Основная модель: Entry (дата, настроение 1-5, заметка, категория, пользователь)
@@ -16,4 +14,3 @@
 - requirements.txt   зависимости
 - README.md
 - .gitignore
-
