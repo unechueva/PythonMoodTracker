@@ -9,4 +9,7 @@ urlpatterns = [
     path('<int:pk>/', views.EntryDetailView.as_view(), name='detail'),
     path('<int:pk>/edit/', views.EntryUpdateView.as_view(), name='update'),
     path('<int:pk>/delete/', views.EntryDeleteView.as_view(), name='delete'),
+    path('reports/week/', views.WeeklyReportView.as_view(), name='report_week'),
+    path('reports/month/', views.MonthlyReportView.as_view(), name='report_month'),
+    path('reports/export-csv/', views.export_entries_csv, name='export_csv'),
 ]
