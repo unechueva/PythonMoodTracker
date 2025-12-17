@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 """
 URL configuration for moodproject project.
 
@@ -24,9 +22,8 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('entries/', include('moodtracker.urls')),
-    path('', include('django.contrib.auth.urls')),
+    path('', include('django.contrib.auth.urls'), name='login'),
     path('register/', views.register, name='register'),
     path('home/', views.home, name='home'),
     path('logout/', views.custom_logout, name='logout'),
 ]
->>>>>>> Stashed changes

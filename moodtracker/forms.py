@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -23,4 +21,3 @@ class EntryForm(forms.ModelForm):
         if d > date.today():
             raise forms.ValidationError('Дата не может быть в будущем')
         return d
->>>>>>> Stashed changes

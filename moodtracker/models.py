@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -31,4 +29,3 @@ class Entry(models.Model):
 
     def __str__(self):
         return f"{self.user} — {self.date}: {self.get_mood_display()}"
->>>>>>> Stashed changes

@@ -14,7 +14,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for entry in entries %}
+            {% for entry in object_list %}
                 <tr>
                     <td>{{ entry.date }}</td>
                     <td>{{ entry.mood }}</td>
@@ -27,5 +27,8 @@
             {% endfor %}
         </tbody>
     </table>
+    <a href="{% url 'entries:export_csv' %}" class="btn btn-primary">Скачать CSV</a>
     <a href="{% url 'entries:create' %}" class="btn btn-primary">Новая запись</a>
+    <a href="{% url 'entries:report_week' %}" class="btn btn-primary">Перейти к отчету за неделю</a>
+    <a href="{% url 'entries:report_month' %}" class="btn btn-primary">Перейти к отчету за месяц</a>
 {% endblock %}

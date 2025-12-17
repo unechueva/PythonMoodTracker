@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -10,11 +8,14 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth import logout
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from .models import Entry
 
-def entries_list(request):
-    entries = Entry.objects.all()
-    return render(request, 'your_template.html', {'entries': entries})
+def delete_entry(request, pk):
+    entry = get_object_or_404(Entry, pk=pk, user=request.user)
+    entry.delete()
+    return redirect('entries:list')
 
 def custom_logout(request):
     logout(request)
@@ -75,4 +76,35 @@ class EntryDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         return Entry.objects.filter(user=self.request.user)
 
->>>>>>> Stashed changes
+from django.http import HttpResponse
+import csv
+from django.views.generic import TemplateView
+from .services.reports import get_entries_for_period, build_report
+
+class WeeklyReportView(LoginRequiredMixin, TemplateView):
+    template_name = "moodtracker/report_week.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        entries = get_entries_for_period(self.request.user, 7)
+        report = build_report(entries)
+        context['report'] = report
+        return context
+
+class MonthlyReportView(LoginRequiredMixin, TemplateView):
+    template_name = "moodtracker/report_month.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        entries = get_entries_for_period(self.request.user, 30)
+        report = build_report(entries)
+        context['report'] = report
+        return context
+
+def export_entries_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="mood_entries_{request.user.username}.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['date', 'mood', 'note'])
+    entries = Entry.objects.filter(user=request.user).order_by('-date')
+    for entry in entries:
+        writer.writerow([entry.date, entry.mood, entry.note])
+    return response
