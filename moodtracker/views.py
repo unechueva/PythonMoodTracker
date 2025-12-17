@@ -3,7 +3,35 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .models import Entry
 from .forms import EntryForm
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, logout
+from django.http import HttpResponse
+import csv
+from .services.reports import get_entries_for_period, build_report
 
+def delete_entry(request, pk):
+    entry = get_object_or_404(Entry, pk=pk, user=request.user)
+    entry.delete()
+    return redirect('entries:list')
+
+def custom_logout(request):
+    logout(request)
+    return redirect('register')
+
+def home(request):
+    return render(request, 'home.html')
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})
 
 class EntryListView(LoginRequiredMixin, ListView):
     model = Entry
@@ -11,7 +39,6 @@ class EntryListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Entry.objects.filter(user=self.request.user)
-
 
 class EntryCreateView(LoginRequiredMixin, CreateView):
     model = Entry
@@ -22,7 +49,6 @@ class EntryCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-
 class EntryUpdateView(LoginRequiredMixin, UpdateView):
     model = Entry
     form_class = EntryForm
@@ -31,7 +57,6 @@ class EntryUpdateView(LoginRequiredMixin, UpdateView):
     def get_queryset(self):
         return Entry.objects.filter(user=self.request.user)
 
-
 class EntryDeleteView(LoginRequiredMixin, DeleteView):
     model = Entry
     success_url = reverse_lazy('entries:list')
@@ -39,19 +64,15 @@ class EntryDeleteView(LoginRequiredMixin, DeleteView):
     def get_queryset(self):
         return Entry.objects.filter(user=self.request.user)
 
-
 class EntryDetailView(LoginRequiredMixin, DetailView):
     model = Entry
 
     def get_queryset(self):
         return Entry.objects.filter(user=self.request.user)
 
-from django.http import HttpResponse
-import csv
-from .services.reports import get_entries_for_period, build_report
-
 class WeeklyReportView(LoginRequiredMixin, TemplateView):
     template_name = "moodtracker/report_week.html"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         entries = get_entries_for_period(self.request.user, 7)
@@ -61,6 +82,7 @@ class WeeklyReportView(LoginRequiredMixin, TemplateView):
 
 class MonthlyReportView(LoginRequiredMixin, TemplateView):
     template_name = "moodtracker/report_month.html"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         entries = get_entries_for_period(self.request.user, 30)

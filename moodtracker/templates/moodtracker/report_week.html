@@ -1,0 +1,103 @@
+<!-- moodtracker/templates/moodtracker/report_month.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Недельный отчет по настроению</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #4A90E2;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #4A90E2;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+            margin-top: 40px;
+        }
+        p {
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        li {
+            padding: 4px 0;
+        }
+        .no-data {
+            color: #999;
+            font-style: italic;
+        }
+        .recommendation {
+            background-color: #e6f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #b3e5fc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Недельный отчет о настроении</h1>
+    <div class="container">
+        {% if report %}
+            <h2>Общая статистика</h2>
+            <p><strong>Среднее настроение за последние 7 дней:</strong> {{ report.average_mood }}</p>
+            <p><strong>Общее количество записей:</strong> {{ report.entry_count }}</p>
+
+            <h2>Дни с минимальным настроением</h2>
+            {% if report.min_days %}
+                <ul>
+                {% for day in report.min_days %}
+                    <li>{{ day }}</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-data">Нет данных для отображения.</p>
+            {% endif %}
+
+            <h2>Дни с максимальным настроением</h2>
+            {% if report.max_days %}
+                <ul>
+                {% for day in report.max_days %}
+                    <li>{{ day }}</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-data">Нет данных для отображения.</p>
+            {% endif %}
+
+            <h2>Максимальная хорошая серия</h2>
+            <p>{{ report.good_streak }} дня(ей)</p>
+
+            <h2>Максимальная плохая серия</h2>
+            <p>{{ report.bad_streak }} дня(ей)</p>
+
+            <h2>Рекомендация</h2>
+            <div class="recommendation">
+                {{ report.recommendation }}
+            </div>
+        {% else %}
+            <p class="no-data">Данные для отображения отсутствуют. Попробуйте добавить записи о настроении за последние 7 дней.</p>
+        {% endif %}
+    </div>
+    <a href="{% url 'entries:list' %}" class="btn btn-primary">Вернуться к основному меню</a>
+</body>
+</html>
