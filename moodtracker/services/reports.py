@@ -1,6 +1,6 @@
 from datetime import timedelta
 from django.utils import timezone
-from .models import Entry
+from moodtracker.models import Entry
 
 def get_entries_for_period(user, days: int):
     today = timezone.now().date()
