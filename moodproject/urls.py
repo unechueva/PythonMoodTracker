@@ -16,9 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from moodtracker import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('entries/', include('moodtracker.urls')),
     path('', include('django.contrib.auth.urls')),
+    path('register/', views.register, name='register'),
+    path('home/', views.home, name='home'),
+    path('logout/', views.custom_logout, name='logout'),
 ]

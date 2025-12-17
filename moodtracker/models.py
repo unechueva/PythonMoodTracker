@@ -25,6 +25,7 @@ class Entry(models.Model):
     class Meta:
         ordering = ['-date']
         unique_together = ('user', 'date')
+        db_table = 'moodtracker_entry'
 
     def __str__(self):
         return f"{self.user} — {self.date}: {self.get_mood_display()}"
